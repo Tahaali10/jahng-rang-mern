@@ -21,37 +21,36 @@ const SignUp = () => {
 
   const handleSignUp = async (e) => {
     e.preventDefault();
-
-    // Validate fields
+  
     if (!username) setError("Enter your username");
     if (!email || !EmailValidation(email)) setError("Enter a valid email");
     if (!password || password.length < 6) setError("Passwords must be at least 6 characters");
     if (!checked) return setError("You must accept the terms and conditions.");
-
+  
     if (username && email && password && EmailValidation(email)) {
       try {
-        // API call to sign up
-        const response = await axios.post("https://ecom-be-h39h.onrender.com/api/auth/register", {
+        const response = await axios.post("http://localhost:5000/api/auth/register", {
           username,
           email,
           password,
         });
-
-        // On successful signup
+  
         const { token, username: registeredUsername } = response.data;
         localStorage.setItem("user", JSON.stringify({ token, username: registeredUsername }));
-
+  
         setSuccessMsg(`Hello ${registeredUsername}, you have signed up successfully! Redirecting to home...`);
         
-        // Redirect to home after signup
+        // Redirect after success
         setTimeout(() => {
           navigate("/"); // Navigate to home or any other route
+          window.location.reload(); // Refresh the page after successful sign-up
         }, 2000);
       } catch (err) {
         setError("Failed to sign up, please try again.");
       }
     }
   };
+  
 
   return (
     <div>
@@ -114,7 +113,7 @@ const SignUp = () => {
                       type="checkbox"
                     />
                     <p className="text-sm text-[#317248]">
-                      I agree to the orebi's <span className="text-[#f9cc1f]">Terms of Service </span> and{" "}
+                      I agree to the Jhang Rang Online Store's <span className="text-[#f9cc1f]">Terms of Service </span> and{" "}
                       <span className="text-[#f9cc1f]">Privacy Policy</span>.
                     </p>
                   </div>

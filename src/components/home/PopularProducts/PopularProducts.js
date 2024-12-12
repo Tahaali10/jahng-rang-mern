@@ -15,11 +15,11 @@ const categories = [
     { name: "grocery", img: icon1 },
     { name: "beverages", img: icon2 },
     { name: "frozen", img: icon3 },
-    { name: "tuck shop", img: icon4 },
+    { name: "Tuck shop", img: icon4 },
     { name: "fruit", img: icon5 },
     { name: "fastfood", img: icon6 },
     { name: "stationary", img: icon7 },
-    { name: "beauty", img: icon8 }
+    { name: "Beauty", img: icon8 }
 ];
 
 const PopularProducts = () => {

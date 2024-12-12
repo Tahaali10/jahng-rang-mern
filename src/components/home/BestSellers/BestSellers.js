@@ -1,8 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Heading from "../Products/Heading";
+import { useDispatch } from "react-redux";
+import { addToCart } from "../../../redux/orebiSlice"; // Assuming you have this action set up
 
-const ProductCard = ({ img, productName, price }) => {
+const ProductCard = ({ img, productName, price, product }) => {
+  const dispatch = useDispatch();
+
+  const handleAddToCart = () => {
+    dispatch(addToCart(product)); // Dispatch the product to the cart
+  };
+
   return (
     <div className="product-card text-center flex flex-col items-center justify-center p-4">
       <img 
@@ -12,13 +20,12 @@ const ProductCard = ({ img, productName, price }) => {
       />
       <h3 className="mt-2 text-lg text-[#317248] font-bold">{productName}</h3>
       <p className="mt-1 text-[#317248]">Rs.{price}</p>
-      <a href="https://wa.me/03211949184">
-        <button
-          className="mt-3 px-4 py-2 bg-[#317248] text-white rounded hover:bg-[#2c613b] transition duration-200"
-        >
-          Order Now
-        </button>
-      </a>
+      <button
+        onClick={handleAddToCart} 
+        className="mt-3 px-4 py-2 bg-[#317248] text-white rounded-md hover:bg-[#2c613b] transition duration-200"
+      >
+        Add to Cart
+      </button>
     </div>
   );
 };
@@ -29,7 +36,7 @@ const BestSellers = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await axios.get('https://ecom-be-h39h.onrender.com/api/products');
+        const response = await axios.get('http://localhost:5000/api/products');
         const products = response.data;
         const categories = new Set();
         const filteredProducts = [];
@@ -60,6 +67,7 @@ const BestSellers = () => {
             img={product.imageUrl || 'path_to_default_image.jpg'} // Using Cloudinary URL directly or default image
             productName={product.name}
             price={product.price}
+            product={product} // Pass the product object to ProductCard
           />
         ))}
       </div>

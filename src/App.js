@@ -7,6 +7,7 @@ import {
 } from "react-router-dom";
 import Footer from "./components/home/Footer/Footer";
 import FooterBottom from "./components/home/Footer/FooterBottom";
+import FooterTop from "./components/home/Footer/FooterTop";
 import Header from "./components/home/Header/Header";
 import HeaderBottom from "./components/home/Header/HeaderBottom";
 import SpecialCase from "./components/SpecialCase/SpecialCase";
@@ -25,7 +26,7 @@ import FastFoodMenu from './components/home/FastFood/FastFoodMenu'; // Ensure th
 
 const Layout = () => {
   return (
-    <div>
+    <div className="flex flex-col min-h-screen overflow-hidden">
       <ToastContainer
         position="top-right"
         autoClose={1000}
@@ -42,12 +43,16 @@ const Layout = () => {
       <HeaderBottom />
       <SpecialCase />
       <ScrollRestoration />
-      <Outlet />
+      <div className="flex-grow">
+        <Outlet />
+      </div>
+      <FooterTop />
       <Footer />
       <FooterBottom />
     </div>
   );
 };
+
 
 const router = createBrowserRouter(
   [

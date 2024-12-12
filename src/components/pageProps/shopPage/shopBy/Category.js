@@ -10,7 +10,7 @@ const Category = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const { data } = await axios.get('https://ecom-be-h39h.onrender.com/api/products');
+        const { data } = await axios.get('http://localhost:5000/api/products');
         console.log("API Data:", data); // Log raw data from the API
     
         const uniqueCategories = Array.from(new Set(data.map(product => product.category)));

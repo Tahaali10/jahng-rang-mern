@@ -17,11 +17,10 @@ export const orebiSlice = createSlice({
         (item) => item._id === action.payload._id
       );
       if (item) {
-        item.quantity += action.payload.quantity;
+        item.quantity += action.payload.quantity || 1;
       } else {
-        state.products.push(action.payload);
+        state.products.push({ ...action.payload, quantity: 1 });
       }
-      // Dispatch a success toast
       toast.success("Product added to cart");
     },
     increaseQuantity: (state, action) => {
@@ -30,38 +29,34 @@ export const orebiSlice = createSlice({
       );
       if (item) {
         item.quantity++;
-        // Dispatch a success toast
       }
     },
-    drecreaseQuantity: (state, action) => {
+    decreaseQuantity: (state, action) => {
       const item = state.products.find(
         (item) => item._id === action.payload._id
       );
-      if (item.quantity === 1) {
-        item.quantity = 1;
-      } else {
+      if (item.quantity > 1) {
         item.quantity--;
-        // Dispatch a success toast
       }
     },
     deleteItem: (state, action) => {
       state.products = state.products.filter(
         (item) => item._id !== action.payload
       );
-      // Dispatch a success toast
       toast.error("Product removed from cart");
     },
     resetCart: (state) => {
       state.products = [];
-      // Dispatch a success toast
     },
-
+    emptyCart: (state) => {
+      state.products = [];
+      toast.success("Cart emptied successfully");
+    },
     toggleBrand: (state, action) => {
       const brand = action.payload;
       const isBrandChecked = state.checkedBrands.some(
         (b) => b._id === brand._id
       );
-
       if (isBrandChecked) {
         state.checkedBrands = state.checkedBrands.filter(
           (b) => b._id !== brand._id
@@ -70,13 +65,11 @@ export const orebiSlice = createSlice({
         state.checkedBrands.push(brand);
       }
     },
-
     toggleCategory: (state, action) => {
       const category = action.payload;
       const isCategoryChecked = state.checkedCategorys.some(
         (b) => b._id === category._id
       );
-
       if (isCategoryChecked) {
         state.checkedCategorys = state.checkedCategorys.filter(
           (b) => b._id !== category._id
@@ -91,10 +84,12 @@ export const orebiSlice = createSlice({
 export const {
   addToCart,
   increaseQuantity,
-  drecreaseQuantity,
+  decreaseQuantity,
   deleteItem,
   resetCart,
+  emptyCart,
   toggleBrand,
   toggleCategory,
 } = orebiSlice.actions;
+
 export default orebiSlice.reducer;

@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Base Axios instance for API calls
 const axiosInstance = axios.create({
-  baseURL: 'https://ecom-be-h39h.onrender.com/api', // Adjust this to match your API's base URL
+  baseURL: 'http://localhost:5000/api',
   headers: {
     'Content-Type': 'application/json'
   }
@@ -35,10 +35,12 @@ axiosInstance.interceptors.response.use(
     if (error.response.status === 401) {
       console.log('Token invalid or expired');
       localStorage.removeItem('token'); // Clear the token if it's invalid
-      // Optionally, redirect the user to the login page or handle re-authentication
+      // Optionally, redirect the user to the login page
+      window.location.href = '/signin';  // This will redirect the user to the login page
     }
     return Promise.reject(error);
   }
 );
+
 
 export default axiosInstance;

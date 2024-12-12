@@ -1,21 +1,31 @@
 import React, { useState, useEffect } from "react";
-import axios from 'axios';
+import axios from "axios";
 import Breadcrumbs from "../../components/pageProps/Breadcrumbs";
 import ShopHeading from "./ShopHeadings";
+import { useDispatch } from "react-redux";
+import { addToCart } from "../../redux/orebiSlice";
 
-const ProductCard = ({ img, productName, price }) => {
+const ProductCard = ({ img, productName, price, product }) => {
+  const dispatch = useDispatch();
+
+  const handleAddToCart = (product) => {
+    dispatch(addToCart(product));
+  };
   return (
     <div className="product-card text-center flex flex-col items-center mb-4">
-      <img 
-        src={img || 'path_to_default_image.jpg'} // Use product.imageUrl or a default placeholder
+      <img
+        src={img || "path_to_default_image.jpg"}
         alt={productName}
-        style={{ width: '100%', height: '200px', objectFit: 'cover' }}
+        style={{ width: "100%", height: "200px", objectFit: "cover" }}
       />
       <h3 className="mt-2 text-lg text-[#317248] font-bold">{productName}</h3>
       <p className="text-[#317248]">Rs.{price}</p>
-      <a href={`https://wa.me/+923211949184?text=I would like more information about ${productName}`}>
-        <button className="mt-3 px-4 py-2 bg-[#317248] text-white rounded hover:bg-[#2c613b] transition duration-200">Order Now</button>
-      </a>
+      <button
+        onClick={() => handleAddToCart(product)} // Pass the product here
+        className="mt-3 px-4 py-2 bg-[#317248] text-white rounded-md hover:bg-[#2c613b] transition duration-200"
+      >
+        Add to Cart
+      </button>
     </div>
   );
 };
@@ -23,8 +33,8 @@ const ProductCard = ({ img, productName, price }) => {
 const Shop = () => {
   const [allProducts, setAllProducts] = useState([]);
   const [categories, setCategories] = useState([]);
-  const [sortOption, setSortOption] = useState('');
-  const [searchQuery, setSearchQuery] = useState('');
+  const [sortOption, setSortOption] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
   const [filteredProducts, setFilteredProducts] = useState([]);
 
   useEffect(() => {
@@ -36,9 +46,8 @@ const Shop = () => {
   }, [allProducts, sortOption]);
 
   useEffect(() => {
-    // Filter products based on search query
     if (searchQuery) {
-      const filtered = allProducts.filter(product =>
+      const filtered = allProducts.filter((product) =>
         product.name.toLowerCase().includes(searchQuery.toLowerCase())
       );
       setFilteredProducts(filtered);
@@ -49,16 +58,18 @@ const Shop = () => {
 
   const fetchProducts = async () => {
     try {
-      const { data: products } = await axios.get('https://ecom-be-h39h.onrender.com/api/products');
+      const { data: products } = await axios.get(
+        "http://localhost:5000/api/products"
+      );
       setAllProducts(products);
     } catch (error) {
-      console.error('Failed to fetch products:', error);
+      console.error("Failed to fetch products:", error);
     }
   };
 
   const organizeProducts = (products) => {
     let categoryMap = {};
-    products.forEach(product => {
+    products.forEach((product) => {
       const key = product.category.toLowerCase();
       if (categoryMap[key]) {
         categoryMap[key].push(product);
@@ -71,13 +82,13 @@ const Shop = () => {
       for (let key in categoryMap) {
         categoryMap[key] = categoryMap[key].sort((a, b) => {
           switch (sortOption) {
-            case 'a-z':
+            case "a-z":
               return a.name.localeCompare(b.name);
-            case 'z-a':
+            case "z-a":
               return b.name.localeCompare(a.name);
-            case 'high-low':
+            case "high-low":
               return b.price - a.price;
-            case 'low-high':
+            case "low-high":
               return a.price - b.price;
             default:
               return 0;
@@ -86,10 +97,12 @@ const Shop = () => {
       }
     }
 
-    setCategories(Object.keys(categoryMap).map(key => ({
-      name: key,
-      products: categoryMap[key],
-    })));
+    setCategories(
+      Object.keys(categoryMap).map((key) => ({
+        name: key,
+        products: categoryMap[key],
+      }))
+    );
   };
 
   return (
@@ -98,11 +111,14 @@ const Shop = () => {
       <input
         type="text"
         value={searchQuery}
-        onChange={e => setSearchQuery(e.target.value)}
+        onChange={(e) => setSearchQuery(e.target.value)}
         placeholder="Search products..."
         className="mb-4 p-2 border border-gray-300 rounded"
       />
-      <select onChange={e => setSortOption(e.target.value)} value={sortOption}>
+      <select
+        onChange={(e) => setSortOption(e.target.value)}
+        value={sortOption}
+      >
         <option value="">Sort by</option>
         <option value="a-z">A-Z</option>
         <option value="z-a">Z-A</option>
@@ -113,12 +129,13 @@ const Shop = () => {
       {searchQuery ? (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-4">
           {filteredProducts.length > 0 ? (
-            filteredProducts.map(product => (
+            filteredProducts.map((product) => (
               <ProductCard
                 key={product._id}
-                img={product.imageUrl || 'path_to_default_image.jpg'} // Use product.imageUrl or a default placeholder
+                img={product.imageUrl || "path_to_default_image.jpg"}
                 productName={product.name}
                 price={product.price}
+                product={product} 
               />
             ))
           ) : (
@@ -130,12 +147,13 @@ const Shop = () => {
           <div key={index} className="mb-10">
             <ShopHeading heading={category.name.toUpperCase()} />
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {category.products.map(product => (
+              {category.products.map((product) => (
                 <ProductCard
                   key={product._id}
-                  img={product.imageUrl || 'path_to_default_image.jpg'} // Use product.imageUrl or a default placeholder
+                  img={product.imageUrl || "path_to_default_image.jpg"}
                   productName={product.name}
                   price={product.price}
+                  product={product} 
                 />
               ))}
             </div>

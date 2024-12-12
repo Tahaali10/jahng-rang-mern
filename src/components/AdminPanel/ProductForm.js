@@ -15,7 +15,7 @@ function ProductForm({ onSubmit, editProduct }) {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const { data } = await axios.get('https://ecom-be-h39h.onrender.com/api/products');
+        const { data } = await axios.get('http://localhost:5000/api/products');
         const uniqueCategories = new Set();
         const uniqueSubcategories = new Set();
 

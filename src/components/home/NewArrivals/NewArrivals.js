@@ -4,25 +4,32 @@ import Slider from "react-slick";
 import Heading from "../Products/Heading";
 import SampleNextArrow from "./SampleNextArrow";
 import SamplePrevArrow from "./SamplePrevArrow";
+import { useDispatch } from "react-redux";
+import { addToCart } from "../../../redux/orebiSlice";
 
-const ProductCard = ({ img, productName, price }) => {
+const ProductCard = ({ img, productName, price, product }) => {
+  const dispatch = useDispatch();
+
+  const handleAddToCart = (product) => {
+    dispatch(addToCart(product)); // Dispatch the product to the cart
+  };
+
   return (
     <div className="product-card text-center flex flex-col items-center">
       <img 
-        src={img || 'path_to_default_image.jpg'} // Using Cloudinary URL directly
+        src={img || 'path_to_default_image.jpg'} 
         alt={productName} 
         className="object-cover"
         style={{ width: '160px', height: '160px', objectFit: 'cover' }}
       />
       <h3 className="mt-2 text-lg text-[#317248] font-bold">{productName}</h3>
       <p className="mt-1 text-[#317248]">Rs.{price}</p>
-      <a href="https://wa.me/+923211949184">
-        <button
-          className="mt-3 px-4 py-2 bg-[#317248] text-white rounded hover:bg-[#2c613b] transition duration-200"
-        >
-          Order Now
-        </button>
-      </a>
+      <button
+        onClick={() => handleAddToCart(product)} // Pass the product here
+        className="mt-3 px-4 py-2 bg-[#317248] text-white rounded-md hover:bg-[#2c613b] transition duration-200"
+      >
+        Add to Cart
+      </button>
     </div>
   );
 };
@@ -33,7 +40,7 @@ const NewArrivals = () => {
   useEffect(() => {
     const fetchGroceries = async () => {
       try {
-        const response = await axios.get('https://ecom-be-h39h.onrender.com/api/products?category=grocery');
+        const response = await axios.get('http://localhost:5000/api/products?category=grocery');
         setGroceries(response.data);
       } catch (error) {
         console.error('Failed to fetch grocery products:', error);
@@ -73,7 +80,6 @@ const NewArrivals = () => {
           slidesToShow: 1,
           slidesToScroll: 1,
           infinite: true,
-          // Ensuring images are centered on mobile
           centerMode: true,
           centerPadding: '0px',
         },
@@ -88,9 +94,10 @@ const NewArrivals = () => {
         {groceries.map(item => (
           <div className="px-2 flex justify-center" key={item._id}>
             <ProductCard
-              img={item.imageUrl || 'path_to_default_image.jpg'} // Using Cloudinary URL directly
+              img={item.imageUrl || 'path_to_default_image.jpg'}
               productName={item.name}
               price={item.price}
+              product={item} // Pass the product to ProductCard
             />
           </div>
         ))}
